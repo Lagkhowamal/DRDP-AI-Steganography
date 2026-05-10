@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Biometric Identity Verification</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 Secure Biometric Identity Verification</h1>
+            <p class="subtitle">Secure Biometric System | AES-256 + DNA Encoding + LSB Steganography</p>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="#" onclick="switchTab('embed')">Embed</a></li>
+                <li><a href="#" onclick="switchTab('verify')">Verify</a></li>
+                <li><a href="/metrics">Metrics</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <!-- EMBED TAB -->
+            <section id="embed-tab" class="tab active">
+                <h2>Biometric Embedding Pipeline</h2>
+                <p class="description">
+                    Extract face embedding → Encrypt with AES-256 → Encode to DNA → Hide in image
+                </p>
+
+                <form id="embed-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="face-image">Face Image:</label>
+                        <input type="file" id="face-image" name="face_image" accept="image/*" required>
+                        <span class="help-text">Upload a clear, frontal face image (JPG/PNG)</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="carrier-image">Carrier Image:</label>
+                        <input type="file" id="carrier-image" name="carrier_image" accept="image/*" required>
+                        <span class="help-text">Larger image where payload will be hidden</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Start Embedding</button>
+                </form>
+
+                <div id="embed-results" class="results hidden">
+                    <h3>✓ Embedding Complete</h3>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="label">Embedding Size:</span>
+                            <span id="result-embedding-size" class="value">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="label">Encrypted Size:</span>
+                            <span id="result-encrypted-size" class="value">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="label">DNA Length:</span>
+                            <span id="result-dna-length" class="value">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="label">Encryption Overhead:</span>
+                            <span id="result-encryption-overhead" class="value">-</span>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h4>DNA Statistics</h4>
+                        <div class="metrics-grid">
+                            <div class="metric">
+                                <span class="label">A Nucleotides:</span>
+                                <span id="result-dna-a" class="value">-</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">T Nucleotides:</span>
+                                <span id="result-dna-t" class="value">-</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">G Nucleotides:</span>
+                                <span id="result-dna-g" class="value">-</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">C Nucleotides:</span>
+                                <span id="result-dna-c" class="value">-</span>
+                            </div>
+                        </div>
+                        <div class="metric">
+                            <span class="label">GC-Content:</span>
+                            <span id="result-dna-gc" class="value">-</span>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h4>Integrity Hashes (SHA256)</h4>
+                        <div id="result-hashes" class="code-block"></div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn btn-secondary" onclick="downloadStego()">Download Stego Image</button>
+                        <button class="btn btn-secondary" onclick="copyKey()">Copy AES Key</button>
+                        <button class="btn btn-secondary" onclick="exportReport()">Export Report</button>
+                    </div>
+                </div>
+
+                <div id="embed-error" class="error-message hidden"></div>
+                <div id="embed-loading" class="loading hidden">
+                    <p>Processing biometric data...</p>
+                    <div class="spinner"></div>
+                </div>
+            </section>
+
+            <!-- VERIFY TAB -->
+            <section id="verify-tab" class="tab">
+                <h2>Biometric Verification Pipeline</h2>
+                <p class="description">
+                    Extract payload → Decode DNA → Decrypt with AES-256 → Verify integrity
+                </p>
+
+                <form id="verify-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="stego-image">Stego Image:</label>
+                        <input type="file" id="stego-image" name="stego_image" accept="image/*" required>
+                        <span class="help-text">Image with hidden biometric payload</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aes-key">AES Key (Hex):</label>
+                        <textarea id="aes-key" name="aes_key" rows="4" placeholder="Paste the AES key in hexadecimal format" required></textarea>
+                        <span class="help-text">64 hex characters (256 bits)</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Start Verification</button>
+                </form>
+
+                <div id="verify-results" class="results hidden">
+                    <h3 id="verify-status">Status</h3>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="label">Verification Result:</span>
+                            <span id="result-verification" class="value">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="label">Recovered Embedding Size:</span>
+                            <span id="result-recovered-size" class="value">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="label">Embedding Distance:</span>
+                            <span id="result-embedding-distance" class="value">-</span>
+                        </div>
+                    </div>
+
+                    <div id="verify-errors" class="section hidden">
+                        <h4>⚠ Integrity Errors</h4>
+                        <ul id="errors-list"></ul>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn btn-secondary" onclick="exportVerificationReport()">Export Report</button>
+                    </div>
+                </div>
+
+                <div id="verify-error" class="error-message hidden"></div>
+                <div id="verify-loading" class="loading hidden">
+                    <p>Verifying biometric integrity...</p>
+                    <div class="spinner"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Secure Biometric System | Version 1.0 | 2026</p>
+            <p><small>For research demonstration only. Ensure compliance with data privacy regulations.</small></p>
+        </footer>
+    </div>
+
+    <!-- Global state for current session -->
+    <script>
+        function downloadStego() {
+            if (!window.currentSessionId) {
+                alert('No session available. Please run the embedding pipeline first.');
+                return;
+            }
+            window.location.href = `/download/${window.currentSessionId}`;
+        }
+
+        function copyKey() {
+            if (!window.currentAesKey) {
+                alert('No AES key available. Please run the embedding pipeline first.');
+                return;
+            }
+            navigator.clipboard.writeText(window.currentAesKey).then(() => {
+                alert('AES key copied to clipboard!');
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
+        function exportReport() {
+            const results = document.querySelector('#embed-results');
+            if (results.classList.contains('hidden')) {
+                alert('No report available. Please run the embedding pipeline first.');
+                return;
+            }
+            const report = {
+                timestamp: new Date().toISOString(),
+                content: results.innerText
+            };
+            const dataStr = JSON.stringify(report, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `embedding_report_${Date.now()}.json`;
+            link.click();
+        }
+
+        function exportVerificationReport() {
+            const results = document.querySelector('#verify-results');
+            if (results.classList.contains('hidden')) {
+                alert('No report available. Please run the verification pipeline first.');
+                return;
+            }
+            const report = {
+                timestamp: new Date().toISOString(),
+                content: results.innerText
+            };
+            const dataStr = JSON.stringify(report, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `verification_report_${Date.now()}.json`;
+            link.click();
+        }
+    </script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

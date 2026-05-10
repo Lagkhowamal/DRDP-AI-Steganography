@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Metrics - Secure Biometric System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 System Metrics</h1>
+            <p class="subtitle">Technical Documentation Data</p>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/metrics">Metrics</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <section class="metrics-section">
+                <h2>Steganography Quality</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h3>PSNR (Peak Signal-to-Noise Ratio)</h3>
+                        <p class="value">{{ metrics['psnr_typical'] }}</p>
+                        <p class="description">Imperceptible difference from carrier image</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>SSIM (Structural Similarity)</h3>
+                        <p class="value">{{ metrics['ssim_typical'] }}</p>
+                        <p class="description">High structural similarity maintained</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="metrics-section">
+                <h2>Data Transformation Pipeline</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h3>Original Embedding</h3>
+                        <p class="value">{{ metrics['embedding_size'] }}</p>
+                        <p class="description">128-dimensional face embedding</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Encryption Overhead</h3>
+                        <p class="value">{{ metrics['encryption_overhead'] }}</p>
+                        <p class="description">IV for AES-CBC mode</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>DNA Expansion</h3>
+                        <p class="value">{{ metrics['dna_expansion'] }}</p>
+                        <p class="description">Binary to nucleotide conversion</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="metrics-section">
+                <h2>Payload Capacity</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h3>Maximum Payload</h3>
+                        <p class="value">{{ metrics['payload_max'] }}</p>
+                        <p class="description">Per typical high-resolution image</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="metrics-section">
+                <h2>Technical Specifications</h2>
+                <div class="spec-table">
+                    <h3>Security Parameters</h3>
+                    <table>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Value</th>
+                            <th>Standard</th>
+                        </tr>
+                        <tr>
+                            <td>Encryption Algorithm</td>
+                            <td>AES-256-CBC</td>
+                            <td>FIPS 197</td>
+                        </tr>
+                        <tr>
+                            <td>Hash Algorithm</td>
+                            <td>SHA-256</td>
+                            <td>FIPS 180-4</td>
+                        </tr>
+                        <tr>
+                            <td>Steganography Method</td>
+                            <td>LSB Replacement</td>
+                            <td>Standard</td>
+                        </tr>
+                        <tr>
+                            <td>Face Embedding</td>
+                            <td>face_recognition (128D)</td>
+                            <td>dlib CNN</td>
+                        </tr>
+                        <tr>
+                            <td>DNA Encoding</td>
+                            <td>2-bit to nucleotide mapping</td>
+                            <td>Custom</td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+
+            <section class="metrics-section">
+                <h2>Performance Benchmarks</h2>
+                <div class="spec-table">
+                    <p><small>Typical values on modern hardware (Intel i7, 16GB RAM)</small></p>
+                    <table>
+                        <tr>
+                            <th>Operation</th>
+                            <th>Time (ms)</th>
+                            <th>Notes</th>
+                        </tr>
+                        <tr>
+                            <td>Face Embedding Extraction</td>
+                            <td>200-500</td>
+                            <td>Depends on image size</td>
+                        </tr>
+                        <tr>
+                            <td>AES-256 Encryption</td>
+                            <td>1-2</td>
+                            <td>512 bytes payload</td>
+                        </tr>
+                        <tr>
+                            <td>DNA Encoding</td>
+                            <td>2-5</td>
+                            <td>Encoding + statistics</td>
+                        </tr>
+                        <tr>
+                            <td>LSB Steganography</td>
+                            <td>500-1000</td>
+                            <td>Image size dependent</td>
+                        </tr>
+                        <tr>
+                            <td>Full Pipeline</td>
+                            <td>700-1500</td>
+                            <td>End-to-end processing</td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+
+            <section class="metrics-section info-box">
+                <h2>For Technical Documentation</h2>
+                <p>Key system metrics for verification:</p>
+                <ul>
+                    <li>Biometric embedding size: 512 bytes</li>
+                    <li>Encryption standard: AES-256-CBC</li>
+                    <li>Steganography capacity: LSB-based, ~0.375 bytes per pixel</li>
+                    <li>DNA encoding expansion: 4x (8 bits → 4 nucleotides)</li>
+                    <li>Typical PSNR: 45-50 dB</li>
+                    <li>Typical SSIM: > 0.95</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <p>Secure Biometric System | Version 1.0 | 2026</p>
+        </footer>
+    </div>
+</body>
+</html>
